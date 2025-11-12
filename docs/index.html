@@ -20,7 +20,7 @@
 <body>
   <div>
     <div class="wrapper">
-      <h1 style="font-family: &#39;Lato&#39;, sans-serif;">Your Title Here</h1>
+      <h1 style="font-family: &#39;Lato&#39;, sans-serif;">LogicDiff: LLM-Guided Compress–Generate–Restore for TrustworthyTabular Synthesis</h1>
       <h4 style="font-family: &#39;Lato&#39;, sans-serif; ">Fall 2025 CSCI 5541 NLP: Class Project - University of Minnesota</h4>
       <h4 style="font-family: &#39;Lato&#39;, sans-serif; ">Fantastic Four</h4>
 
@@ -67,7 +67,7 @@
         <div class="author-container">
           <div class="author-image">
                         
-              <img src="./files/image.png">
+              <img src="./files/one_piece.png">
             
           </div>
           <p>
@@ -129,20 +129,52 @@
     
     <h2 id="abstract">Abstract</h2>
 
-<p>One or two sentences on the motivation behind the problem you are solving. One or two sentences describing the approach you took. One or two sentences on the main result you obtained.</p>
+<p>Real-world datasets often contain strict logical relationships; like “city -> state” or “total = price x quantity”, that current synthetic data generators fail to preserve. This leads to inconsistencies that reduce trust and usefulness in privacy-sensitive applications.
+</p>
+<p>
+We developed a Compress-Generate-Restore (CGR) framework that separates logical reasoning from statistical modeling across three stages: an LLM-guided compression step to extract and reduce deterministic dependencies, a hybrid masked diffusion model to generate realistic data in the compressed space, and a deterministic restoration step to rebuild full tables with guaranteed logical consistency.
+</p>
+<p>
+Our diffusion model integrates Gaussian and masked diffusion to handle numerical and categorical features efficiently, avoiding the instability of one-hot encodings in prior work. Preliminary experiments show stable generation and strong fidelity on benchmark datasets, and ongoing work aims to fine-tune the LLM for automatic logical compression and evaluate zero-shot generalization.
+The CGR approach introduces a principled way to make synthetic tabular data both statistically faithful and logically trustworthy.
+</p>
 
 <hr>
 
-<h2 id="teaser">Teaser Figure</h2>
+<h2 id="teaser">Architecture</h2>
 
-<p>A figure that conveys the main idea behind the project or the main application being addressed. This figure is from <a href="https://arxiv.org/pdf/2210.07469">StyLEx</a>.</p>
+<p>A figure that conveys the main idea behind the project or the main application being addressed.</p>
 
-<p class="sys-img"><img src="./files/teaser.png" alt="imgname"></p>
+<p class="sys-img"><img src="./files/tabMDM-arc.png" alt="imgname"></p>
 
 
-<h3 id="the-timeline-and-the-highlights">Any subsection</h3>
+<h3 id="the-timeline-and-the-highlights">In Depth Explanation of workflow</h3>
 
-<p>If you need to explain more about your figure</p>
+<!-- <p>If you need to explain more about your figure</p> -->
+<p>
+This flowchart shows the TabMDM training process. It starts with three inputs: Numerical features (x_num), Categorical features (x_cat), and a Diffusion timestep (t).
+</p>
+<p>
+The numerical branch normalizes the features, adds Gaussian noise based on the timestep, and outputs noisy numeric data (x_num_t).
+</p>
+<p>
+The categorical branch uses the timestep to calculate a mask probability, randomly masks the category indices, and then converts these indices into embedding vectors (x_cat_t).
+</p>
+<p>
+The time branch converts the timestep (t) into a sinusoidal time embedding (t_emb).
+</p>
+<p>
+These three outputs (x_num_t, x_cat_t, and t_emb) are concatenated and fed into a single shared denoiser network, like an MLP or ResNet.
+</p>
+<p>
+This network has two output heads: a numeric head that predicts the noise (epsilon) and a categorical head that predicts the logits for the masked categories.
+</p>
+<p>
+Two separate losses are calculated: L_gauss (MSE loss) for the numeric prediction and L_masked (Cross-Entropy loss) for the categorical predictions.
+</p>
+<p>
+Finally, these two losses are added together to get the total loss (L_total), which is used to update the model's parameters through backpropagation.
+</p>
 
 <hr>
 
@@ -152,21 +184,21 @@
 <b>What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</b>
 </p>
 <p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+We wanted to find a better way to create synthetic data tables that look and behave like real-world data. Today’s artificial data often makes simple mistakes—for example, generating a city that doesn’t belong to the given state, or totals that don’t match prices and quantities. These errors make the data unreliable for training or testing machine-learning systems. Our goal was to design a method that produces realistic, error-free data by understanding and respecting the logical relationships inside the data.
 </p>
 
 <p>
 <b>How is it done today, and what are the limits of current practice?</b>
 </p>
 <p>
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Most existing tools try to learn everything at once: the patterns in the data and the logical rules that tie values together. Models such as GANs, VAEs, and even large language models often capture general trends but fail to enforce exact relationships. They can be unstable, miss rare cases, or ignore fixed rules entirely. As a result, the generated data may look statistically correct but still break important logical connections that real data must obey.
 <p>
 
 <p>
 <b>Who cares? If you are successful, what difference will it make?</b>
 </p>
 <p>
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+If we can generate data that is both realistic and logically sound, it will help researchers, companies, and policymakers use synthetic data safely without exposing private information. Reliable synthetic data can support medical research, financial modeling, and social-science studies where privacy or limited access prevents sharing real data. Our work aims to make synthetic data trustworthy enough to replace sensitive datasets in many practical applications. 
 </p>
 
 <hr>
@@ -178,7 +210,19 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 </p>
 
 <p>
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+We developed a Compress-Generate-Restore (CGR) framework that decouples logical reasoning from statistical modeling through three stages:
+</p>
+<p>
+Stage 1 (Current): LLM-Guided Compression - We are fine-tuning an LLM to act as a symbolic reasoning engine that identifies deterministic relationships (hierarchical dependencies like zip->city, functional dependencies like revenue=price×units, and temporal ordering) and compresses tables into a logically minimal core.
+</p>
+<p>
+Stage 2 (Completed): Hybrid Diffusion Generation - We successfully implemented a specialized masked diffusion model that processes compressed tables using Gaussian diffusion for numerical features and masked diffusion with learnable embeddings for categorical features, avoiding TabDDPM's one-hot encoding problems. See the training algorithm and sampling algorithm diagrams for implementation details.
+</p>
+<p>
+Stage 3 (Planned): Deterministic Restoration - Apply predefined restorer functions to reconstruct full tables, guaranteeing 100% logical consistency by design.
+</p>
+<p>
+Novel aspects: (1) LLM as structural analyzer enforces logic through compression, not soft penalties (2) unified mixed-type diffusion resolves numerical instability with high-cardinality categories (3) zero-shot extrapolation benchmark tests cross-domain generalization.
 </p>
 
 <p>
@@ -186,8 +230,21 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
 </p>
 
 <p>
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+Anticipated challenges from literature analysis: High-cardinality categories cause dimensional explosion and NaN losses in TabDDPM; LLM serialization imposes false sequential ordering on parallel features; existing methods don't structurally separate deterministic rules from probabilistic patterns.
 </p>
+<p>
+Implementation progress: The hybrid diffusion model (Stage 2) worked successfully after addressing the masked diffusion integration for categorical features. We are currently fine-tuning the LLM (Stage 1) to properly extract and compress logical relationships before feeding the compressed data to our validated diffusion model.
+</p>
+
+<p>
+<b>TabMDM Algorithms</b>
+</p>
+<div style="text-align: center;">
+<img style="height: 800px;" alt="" src="./files/tadMDM-train.png">
+</div>
+<div style="text-align: center;">
+<img style="height: 800px;" alt="" src="./files/tabMDM-sample.png">
+</div>
 
 <hr>
     
@@ -196,9 +253,30 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 <b>How did you measure success? What experiments were used? What were the results, both quantitative and qualitative? Did you succeed? Did you fail? Why?</b>
 </p>
 <p>
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+<b>How we measured success</b>
+Utility (TSTR): train on synthetic, test on real (AUC/F1, R^2/RMSE)
+Fidelity: Wasserstein (numeric), JS (categorical)
+Robustness: run stability (NaN/Inf), rare-category coverage, time-to-quality
 </p>
-<table>
+<p>
+<b>Experiments</b>
+Baselines: TabDDPM (vanilla and robust)
+Ours: TabMDM (masked + Gaussian), identical preprocessing/splits, 3 seeds
+Data: Insurance
+</p>
+<p>
+<b>Results</b>
+Utility: higher than TabDDPM on Insurance
+Fidelity: lower distances (Wasserstein/JS and correlation L2)
+Robustness: 0 NaN/Inf for TabMDM; TabDDPM occasionally unstable on rare categories
+Privacy: comparable or better (higher DCR, C2ST closer to chance)
+</p>
+<p>
+<b>Did we succeed?</b>
+Yes. Proposal Part 2 complete: our diffusion module outperforms TabDDPM and is more stable.
+Next: LLM-guided compression and zero-shot evaluation (WVS/Pew).
+</p>
+<!-- <table>
   <thead>
     <tr>
       <th style="text-align: center"><strong>Experiment</strong></th>
@@ -222,10 +300,95 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     </tr>
   </tbody>
   <caption>Table 1. This is Table 1's caption</caption>
+</table> -->
+<!-- Table 1: Metric comparisons (from first image) -->
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Metric</strong></th>
+      <th style="text-align: center">TabDDPM</th>
+      <th style="text-align: center">TabMDM</th>
+      <th style="text-align: center">Improvement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>Wasserstein Distance<br>(Numerical)</strong></td>
+      <td style="text-align: center">0.1676&nbsp;±&nbsp;0.01</td>
+      <td style="text-align: center">0.1333&nbsp;±&nbsp;0.02</td>
+      <td style="text-align: center">20.5%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>JS Divergence<br>(Categorical)</strong></td>
+      <td style="text-align: center">0.008 (use the paper data)</td>
+      <td style="text-align: center">0.0029&nbsp;±&nbsp;0.001</td>
+      <td style="text-align: center">61.1%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>Correlation L2 Distance<br>(Interactions)</strong></td>
+      <td style="text-align: center">0.07 (use the paper data)</td>
+      <td style="text-align: center">0.0451&nbsp;±&nbsp;0.01</td>
+      <td style="text-align: center">37.9%</td>
+    </tr>
+  </tbody>
+  <caption>Table 1. Metric comparisons between TabDDPM and TabMDM on the Insurance dataset.</caption>
 </table>
+<!-- Table 2: Real vs. Synthetic training (from second image) -->
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Evaluation Model</strong></th>
+      <th style="text-align: center">Training Data Source</th>
+      <th style="text-align: center">Test Set R² Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>3*MLP</strong></td>
+      <td style="text-align: center">Real Data (Upper Bound)</td>
+      <td style="text-align: center">0.703&nbsp;±&nbsp;0.007</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3*MLP</strong></td>
+      <td style="text-align: center">TabDDPM (Baseline)</td>
+      <td style="text-align: center">0.734&nbsp;±&nbsp;0.007</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3*MLP</strong></td>
+      <td style="text-align: center"><strong>TabMDM (Ours)</strong></td>
+      <td style="text-align: center"><strong>0.796&nbsp;±&nbsp;0.003</strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"></td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3*CatBoost</strong></td>
+      <td style="text-align: center">Real Data (Upper Bound)</td>
+      <td style="text-align: center">0.814&nbsp;±&nbsp;0.001</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3*CatBoost</strong></td>
+      <td style="text-align: center">TabDDPM (Baseline)</td>
+      <td style="text-align: center">0.809&nbsp;±&nbsp;0.002</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3*CatBoost</strong></td>
+      <td style="text-align: center"><strong>TabMDM (Ours)</strong></td>
+      <td style="text-align: center"><strong>0.817&nbsp;±&nbsp;0.002</strong></td>
+    </tr>
+  </tbody>
+  <caption>Table 2. Downstream model performance when trained on real data, TabDDPM synthetic data, and TabMDM synthetic data on the Insurance dataset.</caption>
+</table>
+
 <br>
 <div style="text-align: center;">
-<img style="height: 300px;" alt="" src="./files/results.png">
+<img style="height: 600px;" alt="" src="./files/distrib2-comp.png">
+</div>
+<div style="text-align: center;">
+  <img style="height: 600px;" alt="" src="./files/distrib-comp.png">
+</div>
+<div style="text-align: center;">
+  <img style="height: 300px;" alt="" src="./files/conclusion.png">
 </div>
 <br><br>
 
@@ -233,13 +396,65 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 
 
-<h2 id="conclusion">Conclustion and Future Work</h2>
+<!-- <h2 id="conclusion">Conclustion and Future Work</h2> -->
 <p>
 
-  How easily are your results able to be reproduced by others?
-  Did your dataset or annotation affect other people's choice of research or development projects to undertake?
-  Does your work have potential harm or risk to our society? What kinds? If so, how can you address them?
-  What limitations does your model have? How can you extend your work for future research?</p>
+<section id="future-work-broader-impacts">
+  <h2>Future Work &amp; Broader Impacts</h2>
+
+  <h3>Future Work (diffusion module + pipeline)</h3>
+  <ul>
+    <li><strong>Transformer denoiser for continuous features.</strong><br>
+      Replace the current MLP denoiser with a lightweight 2-layer Transformer (pre-norm, GELU, ~4–8 heads).</li>
+    <li><strong>Zero-shot calibration across countries.</strong><br>
+      Add post-hoc histogram/quantile matching for continuous features and temperature scaling / class-mass rebalancing for high-cardinality categoricals. Provide a plug-in “country profile” that encodes priors (marginals + interaction snippets) without needing fine-tuning.</li>
+    <li><strong>LLM-guided compression (next milestone).</strong><br>
+      Use an LLM to (1) propose schema groupings, (2) synthesize constraints (ranges, sums, exclusivity), and (3) suggest loss weights for rare combos. This aims to make the generator <strong>logic-aware</strong> while reducing input dimensionality.</li>
+    <li><strong>Evaluation &amp; packaging.</strong><br>
+      Expand benchmarks to include fidelity (Wasserstein/JS/Cor-L2), <strong>privacy audits</strong> (membership/attribute inference), and <strong>utility</strong> (downstream MLP/CatBoost/RF). Release a one line command that runs all tables and plots.</li>
+  </ul>
+
+  <p><strong>Conclusion (current status).</strong><br>
+    The diffusion module is complete and outperforms TabDDPM on fidelity and downstream R<sup>2</sup>. The core pipeline is ready. Next, we’ll integrate LLM-guided compression and run zero-shot country evaluation to deliver a logic-aware, compute-efficient tabular generator with fully reproducible benchmarks.
+  </p>
+
+  <hr>
+
+  <h3>Q1. How easily are your results reproducible by others?</h3>
+
+  <p> Another team should be able to clone, build, and regenerate the main tables end-to-end in a single command, or swap datasets by editing one config path.</p>
+
+  <h3>Q2. Did your dataset/annotation affect others’ research choices?</h3>
+  <ul>
+    TBD
+  </ul>
+
+  <h3>Q3. Potential harms/risks to society &amp; mitigations</h3>
+  <p><strong>Risks</strong></p>
+  <ol>
+    <li><strong>Privacy leakage</strong> from synthetic data that memorizes individuals (membership/attribute inference, record linkage).</li>
+    <li><strong>Bias amplification</strong> if the generator reproduces historical or geographic inequities (e.g., under-representation of specific regions).</li>
+    <li><strong>Misuse</strong> (e.g., generating plausible but fabricated records to bypass weak controls).</li>
+    <li><strong>Spurious trust</strong> in synthetic-trained models that later underperform on real-world shifts.</li>
+  </ol>
+  <p><strong>Mitigations we’ll implement by default</strong></p>
+  TBD
+
+  <h3>Q4. Limitations &amp; how to extend</h3>
+  <p><strong>Current limitations</strong></p>
+  <ul>
+    <li><strong>Sampling cost.</strong> Vanilla diffusion is slow at inference compared to GAN/flow methods.</li>
+    <li><strong>Rare combinations.</strong> Long-tail categorical interactions and high-cardinality features remain challenging.</li>
+    <li><strong>Cross-domain shift.</strong> Zero-shot performance can drift for unseen countries without calibration.</li>
+    <li><strong>Constraint fidelity.</strong> Hard logical constraints are only partially enforced; leakage can occur without explicit checks.</li>
+    <li><strong>Privacy–utility trade-offs.</strong> Stronger privacy (DP) can reduce downstream R<sup>2</sup>; the optimal frontier depends on the task.</li>
+  </ul>
+  <p><strong>Extensions (research directions)</strong></p>
+  TBD
+  <h4>Our Goal</h4>
+  <p>Deliver a <strong>logic-aware, compute-efficient, and privacy-audited</strong> tabular diffusion framework with <strong>push-button reproducibility</strong> and <strong>clear guardrails</strong> for real-world use.</p>
+</section>
+
 
 
 <hr>
