@@ -125,14 +125,15 @@
     
     <h2 id="abstract">Abstract</h2>
 
-<p>Real-world datasets often contain strict logical relationships; like “city -> state” or “total = price x quantity”, that current synthetic data generators fail to preserve. This leads to inconsistencies that reduce trust and usefulness in privacy-sensitive applications.
-</p>
 <p>
-We developed a Compress-Generate-Restore (CGR) framework that separates logical reasoning from statistical modeling across three stages: an LLM-guided compression step to extract and reduce deterministic dependencies, a hybrid masked diffusion model to generate realistic data in the compressed space, and a deterministic restoration step to rebuild full tables with guaranteed logical consistency.
-</p>
-<p>
-Our diffusion model integrates Gaussian and masked diffusion to handle numerical and categorical features efficiently, avoiding the instability of one-hot encodings in prior work. Preliminary experiments show stable generation and strong fidelity on benchmark datasets, and ongoing work aims to fine-tune the LLM for automatic logical compression and evaluate zero-shot generalization.
-The CGR approach introduces a principled way to make synthetic tabular data both statistically faithful and logically trustworthy.
+We introduce <strong>Compress–Generate–Restore (CGR)</strong>, a compute-efficient framework for
+synthetic tabular data generation that separates logical reasoning from statistical modeling.
+An LLM acts as a symbolic reasoner to extract hierarchical, functional, and temporal relations
+and compress tables into a logically minimal core. A hybrid <strong>masked&nbsp;+&nbsp;Gaussian
+diffusion</strong> model learns this core, while a deterministic restorer reconstructs full tables,
+guaranteeing logic consistency by design. By enforcing logic structurally and improving robustness
+for mixed-type data, CGR provides a reproducible and trustworthy foundation for synthetic tabular
+data generation.
 </p>
 
 <hr>
