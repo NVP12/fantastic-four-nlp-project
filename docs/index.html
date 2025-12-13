@@ -293,18 +293,9 @@ dependencies remain challenging, the final framework consistently produces clean
 synthetic data than existing baselines.
 </p>
 
-<!-- <p>
-<b>TabMDM Training and Sampling Algorithms</b>
-</p>
-<div style="text-align: center;">
-<img style="height: 800px;" alt="" src="./files/tadMDM-train.png">
-</div>
-<div style="text-align: center;">
-<img style="height: 800px;" alt="" src="./files/tabMDM-sample.png">
-</div>
--->
     
 <hr> 
+
     
 <h2 id="results">Results</h2>
 <p>
@@ -498,16 +489,6 @@ quency comparisons (blue: real, orange: synthetic).
   <h2>Future Work &amp; Broader Impacts</h2>
 
   <h3>What next?</h3>
-  <!-- <ul>
-    <li><strong>Transformer denoiser for continuous features.</strong><br>
-      Replace the current MLP denoiser with a lightweight 2-layer Transformer (pre-norm, GELU, ~4–8 heads).</li>
-    <li><strong>Zero-shot calibration across countries.</strong><br>
-      Add post-hoc histogram/quantile matching for continuous features and temperature scaling / class-mass rebalancing for high-cardinality categoricals. Provide a plug-in “country profile” that encodes priors (marginals + interaction snippets) without needing fine-tuning.</li>
-    <li><strong>LLM-guided compression (next milestone).</strong><br>
-      Use an LLM to (1) propose schema groupings, (2) synthesize constraints (ranges, sums, exclusivity), and (3) suggest loss weights for rare combos. This aims to make the generator <strong>logic-aware</strong> while reducing input dimensionality.</li>
-    <li><strong>Evaluation &amp; packaging.</strong><br>
-      Expand benchmarks to include fidelity (Wasserstein/JS/Cor-L2), <strong>privacy audits</strong> (membership/attribute inference), and <strong>utility</strong> (downstream MLP/CatBoost/RF). Release a one line command that runs all tables and plots.</li>
-  </ul> -->
   <ul>
   <li>
     <strong>Richer relationships:</strong> Our restoration step currently enforces rules in a fully deterministic way.
