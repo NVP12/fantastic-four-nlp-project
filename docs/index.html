@@ -146,6 +146,7 @@ data generation.
        style="width:100%; max-width:2000px;">
   <figcaption style="text-align: center;">
     Figure 1: LogicDiff Intuitive Overview. (Cred: Nano-Banana-Pro) 
+    [Reomple: Example*]
   </figcaption>
 </figure>
 
@@ -156,16 +157,10 @@ data generation.
 <p>
 <!-- <b>What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</b> -->
 </p>
-<!-- <p>
-We wanted to find a better way to create synthetic data tables that look and behave like real-world data. Today’s artificial data often makes simple mistakes—for example, generating a city that doesn’t belong to the given state, or totals that don’t match prices and quantities. These errors make the data unreliable for training or testing machine-learning systems. Our goal was to design a method that produces realistic, error-free data by understanding and respecting the logical relationships inside the data.
-</p> -->
 
 <p>
 <!-- <b>How is it done today, and what are the limits of current practice?</b> -->
 </p>
-<!-- <p>
-Most existing tools try to learn everything at once: the patterns in the data and the logical rules that tie values together. Models such as GANs, VAEs, and even large language models often capture general trends but fail to enforce exact relationships. They can be unstable, miss rare cases, or ignore fixed rules entirely. As a result, the generated data may look statistically correct but still break important logical connections that real data must obey.
-<p> -->
 
 <p>
 <!-- <b>Who cares? If you are successful, what difference will it make?</b> -->
@@ -307,8 +302,9 @@ synthetic data than existing baselines.
 <div style="text-align: center;">
 <img style="height: 800px;" alt="" src="./files/tabMDM-sample.png">
 </div>
-
-<hr> -->
+-->
+    
+<hr> 
     
 <h2 id="results">Results</h2>
 <p>
@@ -492,149 +488,7 @@ quency comparisons (blue: real, orange: synthetic).
 </figure>
 
 
-
-<p>
-
-<!-- Utility (TSTR): train on synthetic, test on real (AUC/F1, R^2/RMSE)
-Fidelity: Wasserstein (numeric), JS (categorical)
-Robustness: run stability (NaN/Inf), rare-category coverage, time-to-quality -->
-</p>
-<p>
-
-<!-- Baselines: TabDDPM (vanilla and robust)
-Ours: TabMDM (masked + Gaussian), identical preprocessing/splits, 3 seeds
-Data: Insurance -->
-</p>
-<p>
-
-<!-- Utility: higher than TabDDPM on Insurance
-Fidelity: lower distances (Wasserstein/JS and correlation L2)
-Robustness: 0 NaN/Inf for TabMDM; TabDDPM occasionally unstable on rare categories
-Privacy: comparable or better (higher DCR, C2ST closer to chance) -->
-</p>
-<p>
-
-<!-- Yes. Proposal Part 2 complete: our diffusion module outperforms TabDDPM and is more stable.
-Next: LLM-guided compression and zero-shot evaluation (WVS/Pew). -->
-</p>
-<!-- <table>
-  <thead>
-    <tr>
-      <th style="text-align: center"><strong>Experiment</strong></th>
-      <th style="text-align: center">1</th>
-      <th style="text-align: center">2</th>
-      <th style="text-align: center">3</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center"><strong>Sentence</strong></td>
-      <td style="text-align: center">Example 1</td>
-      <td style="text-align: center">Example 2</td>
-      <td style="text-align: center">Example 3</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>Errors</strong></td>
-      <td style="text-align: center">error A, error B, error C</td>
-      <td style="text-align: center">error C</td>
-      <td style="text-align: center">error B</td>
-    </tr>
-  </tbody>
-  <caption>Table 1. This is Table 1's caption</caption>
-</table> -->
-<!-- Table 1: Metric comparisons (from first image) -->
-<!-- <table>
-  <thead>
-    <tr>
-      <th style="text-align: center"><strong>Metric</strong></th>
-      <th style="text-align: center">TabDDPM</th>
-      <th style="text-align: center">TabMDM</th>
-      <th style="text-align: center">Improvement</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center"><strong>Wasserstein Distance<br>(Numerical)</strong></td>
-      <td style="text-align: center">0.1676&nbsp;±&nbsp;0.01</td>
-      <td style="text-align: center">0.1333&nbsp;±&nbsp;0.02</td>
-      <td style="text-align: center">20.5%</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>JS Divergence<br>(Categorical)</strong></td>
-      <td style="text-align: center">0.008 (use the paper data)</td>
-      <td style="text-align: center">0.0029&nbsp;±&nbsp;0.001</td>
-      <td style="text-align: center">61.1%</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>Correlation L2 Distance<br>(Interactions)</strong></td>
-      <td style="text-align: center">0.07 (use the paper data)</td>
-      <td style="text-align: center">0.0451&nbsp;±&nbsp;0.01</td>
-      <td style="text-align: center">37.9%</td>
-    </tr>
-  </tbody>
-  <caption>Table 1. Metric comparisons between TabDDPM and TabMDM on the Insurance dataset.</caption>
-</table> -->
-<!-- Table 2: Real vs. Synthetic training (from second image) -->
-<!-- <table>
-  <thead>
-    <tr>
-      <th style="text-align: center"><strong>Evaluation Model</strong></th>
-      <th style="text-align: center">Training Data Source</th>
-      <th style="text-align: center">Test Set R² Score</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center"><strong>3*MLP</strong></td>
-      <td style="text-align: center">Real Data (Upper Bound)</td>
-      <td style="text-align: center">0.703&nbsp;±&nbsp;0.007</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>3*MLP</strong></td>
-      <td style="text-align: center">TabDDPM (Baseline)</td>
-      <td style="text-align: center">0.734&nbsp;±&nbsp;0.007</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>3*MLP</strong></td>
-      <td style="text-align: center"><strong>TabMDM (Ours)</strong></td>
-      <td style="text-align: center"><strong>0.796&nbsp;±&nbsp;0.003</strong></td>
-    </tr>
-    <tr>
-      <td style="text-align: center;"></td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>3*CatBoost</strong></td>
-      <td style="text-align: center">Real Data (Upper Bound)</td>
-      <td style="text-align: center">0.814&nbsp;±&nbsp;0.001</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>3*CatBoost</strong></td>
-      <td style="text-align: center">TabDDPM (Baseline)</td>
-      <td style="text-align: center">0.809&nbsp;±&nbsp;0.002</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"><strong>3*CatBoost</strong></td>
-      <td style="text-align: center"><strong>TabMDM (Ours)</strong></td>
-      <td style="text-align: center"><strong>0.817&nbsp;±&nbsp;0.002</strong></td>
-    </tr>
-  </tbody>
-  <caption>Table 2. Downstream model performance when trained on real data, TabDDPM synthetic data, and TabMDM synthetic data on the Insurance dataset.</caption>
-</table> -->
-
-<!-- <br>
-<div style="text-align: center;">
-<img style="height: 600px;" alt="" src="./files/distrib2-comp.png">
-</div>
-<div style="text-align: center;">
-  <img style="height: 600px;" alt="" src="./files/distrib-comp.png">
-</div>
-<div style="text-align: center;">
-  <img style="height: 300px;" alt="" src="./files/conclusion.png">
-</div>
-<br><br>
-
-<hr> -->
-
+<hr>
 
 
 <!-- <h2 id="conclusion">Conclustion and Future Work</h2> -->
@@ -734,45 +588,12 @@ Next: LLM-guided compression and zero-shot evaluation (WVS/Pew). -->
   </p>
 </div>
 
-
-  <!-- <h3>Q1. How easily are your results reproducible by others?</h3>
-
-  <p> Another team should be able to clone, build, and regenerate the main tables end-to-end in a single command, or swap datasets by editing one config path.</p>
-
-  <h3>Q2. Did your dataset/annotation affect others’ research choices?</h3>
-  <ul>
-    TBD
-  </ul>
-
-  <h3>Q3. Potential harms/risks to society &amp; mitigations</h3>
-  <p><strong>Risks</strong></p>
-  <ol>
-    <li><strong>Privacy leakage</strong> from synthetic data that memorizes individuals (membership/attribute inference, record linkage).</li>
-    <li><strong>Bias amplification</strong> if the generator reproduces historical or geographic inequities (e.g., under-representation of specific regions).</li>
-    <li><strong>Misuse</strong> (e.g., generating plausible but fabricated records to bypass weak controls).</li>
-    <li><strong>Spurious trust</strong> in synthetic-trained models that later underperform on real-world shifts.</li>
-  </ol>
-  <p><strong>Mitigations we’ll implement by default</strong></p>
-  TBD
-
-  <h3>Q4. Limitations &amp; how to extend</h3>
-  <p><strong>Current limitations</strong></p>
-  <ul>
-    <li><strong>Sampling cost.</strong> Vanilla diffusion is slow at inference compared to GAN/flow methods.</li>
-    <li><strong>Rare combinations.</strong> Long-tail categorical interactions and high-cardinality features remain challenging.</li>
-    <li><strong>Cross-domain shift.</strong> Zero-shot performance can drift for unseen countries without calibration.</li>
-    <li><strong>Constraint fidelity.</strong> Hard logical constraints are only partially enforced; leakage can occur without explicit checks.</li>
-    <li><strong>Privacy–utility trade-offs.</strong> Stronger privacy (DP) can reduce downstream R<sup>2</sup>; the optimal frontier depends on the task.</li>
-  </ul>
-  <p><strong>Extensions (research directions)</strong></p>
-  TBD -->
   <h4 style="text-align: center;">Our Goal</h4>
 <p style="text-align: center;">
   Deliver a <strong>logic-aware, compute-efficient, and privacy-audited</strong>
   tabular diffusion framework with <strong>push-button reproducibility</strong>
   and <strong>clear guardrails</strong> for real-world use.
 </p></section>
-
 
 
 <hr>
